@@ -40,9 +40,20 @@
     </nav>
 
     <!-- Form -->
-    <div class="container w-25 mt-5 d-flex justify-content-between">
-        <a href="bukutamu.php" class="btn btn-primary">Tamu</a>
-        <a href="loginpejabat.php" class="btn btn-primary">Pejabat</a>
+    <div class="container border mt-5">
+        <h2>Login Ke Akun Pejabat</h2>
+        <form action="" method="POST">
+            <div class="mb-3">
+                <label for="email" class="form-label">Email address</label>
+                <input type="email" class="form-control" id="email" aria-describedby="emailHelp">
+                <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" class="form-control" id="password">
+            </div>
+            <button type="button" class="btn btn-primary">Login</button>
+        </form>
     </div>
 </body>
 
