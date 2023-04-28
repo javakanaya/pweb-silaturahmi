@@ -1,3 +1,20 @@
+<?php
+
+session_start();
+
+if (isset($_SESSION["user_id"])) {
+
+    include("./config.php");
+
+    $sql = "SELECT * FROM warga WHERE id = {$_SESSION["user_id"]}";
+
+    $result = mysqli_query($db,  $sql);
+
+    $user = $result->fetch_assoc();
+}
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -38,7 +55,18 @@
             </div>
         </div>
     </nav>
-    
+
+    <h1>Home</h1>
+
+    <?php if (isset($user)) : ?>
+        <p>You are logged in.</p>
+
+        <p>Hello <?= htmlspecialchars($user["nama"]) ?></p>
+
+        <p><a href="logout.php">log out</a></p>
+    <?php else : ?>
+        <?php header("Location: index.php"); ?>
+    <?php endif; ?>
 </body>
 
 </html>

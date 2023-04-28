@@ -14,7 +14,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     if ($user) {
         if (password_verify($_POST["password"], $user["password"])) {
-            // die("Login successful");
+            
+            session_start();
+
+            session_regenerate_id();
+
+            $_SESSION["user_id"] = $user["id"];
+
             header("Location: warga-home.php");
             exit;
         }
