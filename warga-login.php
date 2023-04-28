@@ -1,19 +1,22 @@
 <?php
 
+include("./config.php");
+
 $is_invalid = false;
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    $mysqli = require __DIR__ . "/config.php";
 
-    $sql = sprintf("SELECT * FROM warga WHERE email = '%s'", $mysqli->real_escape_string($_POST["email"]));
+    $sql = sprintf("SELECT * FROM warga WHERE email = '%s'", htmlspecialchars(($_POST["email"])));
 
-    $result = $mysqli->query($sql);
+    $result = mysqli_query($db,  $sql);
 
     $user = $result->fetch_assoc();
 
     if ($user) {
         if (password_verify($_POST["password"], $user["password"])) {
-            die("Login successful");
+            // die("Login successful");
+            header("Location: warga-home.php");
+            exit;
         }
     }
 
@@ -65,7 +68,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     <!-- Form -->
     <div class="container mt-5">
-        <h2>Login akun warga</h2>
+        <h2>Masuk ke akun warga</h2>
 
         <?php if ($is_invalid) : ?>
             <em>Invalid Login</em>
@@ -80,7 +83,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 <label for="password" class="form-label">Password</label>
                 <input type="password" class="form-control" id="password" name="password">
             </div>
-            <button class="btn btn-success">Log in</button>
+            <button class="btn btn-primary btn-block">Log in</button>
+            <div class="text-center">
+                <p>Belum mendaftar? Daftarkan akun anda <a href="warga-register.php">Daftar</a></p>
+            </div>
         </form>
     </div>
 </body>

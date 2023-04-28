@@ -5,10 +5,9 @@ $db_user = "root";
 $db_password = "";
 $db_name = "silaturahmi";
 
-$mysqli = new mysqli($db_host, $db_user, $db_password, $db_name);
+$db = mysqli_connect($db_host, $db_user, $db_password, $db_name);
 
-if($mysqli->connect_errno) {
-    die("Connection error: " . $mysqli->connect_error);
+if (!$db) {
+    die("Gagal terhubung dengan database " . mysqli_connect_error());
 }
 
-return $mysqli;

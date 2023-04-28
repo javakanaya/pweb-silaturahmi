@@ -1,5 +1,7 @@
 <?php
 
+include("./config.php");
+
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     if (empty($_POST["nama"])) {
         die("Name is required");
@@ -25,28 +27,15 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         die("Password must matchs");
     }
 
+    $nama = htmlspecialchars($_POST["nama"]);
     $hashed_password = password_hash($_POST["password"], PASSWORD_DEFAULT);
+    $email = htmlspecialchars($_POST["email"]);
+    $alamat = htmlspecialchars($_POST["alamat"]);
 
-    $mysqli = require __DIR__ . "/config.php";
+    $sql = "INSERT INTO warga (nama, password, email, alamat) VALUES ('$nama', '$hashed_password', '$email', '$alamat')";
+    $query = mysqli_query($db,  $sql);
 
-    $sql = "INSERT INTO warga (nama, password, email, alamat) VALUES (?, ?, ?, ?)";
-
-    $stmt = $mysqli->stmt_init();
-
-    if (!$stmt->prepare($sql)) {
-        die("SQL error: " . $mysqli->error);
-    }
-
-    $stmt->bind_param(
-        "ssss",
-        $_POST["nama"],
-        $hashed_password,
-        $_POST["email"],
-        $_POST["alamat"]
-    );
-
-    if ($stmt->execute()) {
-
+    if ($query) {
         header("Location: warga-login.php");
         exit;
     } else {
@@ -98,7 +87,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     <!-- Form -->
     <div class="container mt-5">
-        <h2>Daftarkan akun warga</h2>
+        <h2>Daftar akun warga</h2>
         <form action="" method="POST">
             <div class="mb-3">
                 <label for="nama" class="form-label">Nama</label>
@@ -120,7 +109,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 <label for="alamat" class="form-label">Alamat</label>
                 <textarea class="form-control" id="alamat" name="alamat" rows="3"></textarea>
             </div>
-            <button class="btn btn-success btn-block">Daftar</button>
+            <button class="btn btn-primary btn-block">Daftar</button>
+            <div class="text-center">
+                <p>Sudah mendaftar? Masuk ke akun anda <a href="warga-login.php">Login</a></p>
+            </div>
         </form>
     </div>
 </body>
