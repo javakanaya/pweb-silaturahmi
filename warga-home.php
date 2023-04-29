@@ -6,11 +6,28 @@ if (isset($_SESSION["user_id"])) {
 
     include("./config.php");
 
-    $sql = "SELECT * FROM warga WHERE id = {$_SESSION["user_id"]}";
+    $sql_get_user = "SELECT * FROM warga WHERE id = {$_SESSION["user_id"]}";
 
-    $result = mysqli_query($db,  $sql);
+    $result = mysqli_query($db,  $sql_get_user);
 
     $user = $result->fetch_assoc();
+
+    // submit pesan baru
+    if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['pesan-baru'])) {
+        $id_pengirim = $_SESSION["user_id"];
+        $id_penerima = $_POST["id-penerima"];
+        $isi = htmlspecialchars($_POST["isi-pesan"]);
+
+        $sql = "INSERT INTO pesan (pengirim, pejabat_tujuan, isi, waktu_kirim) VALUES ('$id_pengirim', '$id_penerima', '$isi', NOW())";
+        $query = mysqli_query($db,  $sql);
+
+        if ($query) {
+            header("Location: warga-home.php");
+            exit;
+        } else {
+            die($mysqli->error . " " . $mysqli->errno);
+        }
+    }
 }
 
 ?>
@@ -30,40 +47,98 @@ if (isset($_SESSION["user_id"])) {
 </head>
 
 <body>
-    <!-- Navbar -->
-    <nav class="navbar bg-dark navbar-expand-lg bg-body-tertiary" data-bs-theme="dark">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="index.php">Navbar</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="index.php">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Features</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Pricing</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link disabled">Disabled</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-
-    <h1>Home</h1>
-
     <?php if (isset($user)) : ?>
-        <p>You are logged in.</p>
+        <!-- Navbar -->
+        <nav class="navbar bg-dark navbar-expand-lg bg-body-tertiary" data-bs-theme="dark">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="index.php">Navbar</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="index.php">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Features</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Pricing</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link disabled">Disabled</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
 
-        <p>Hello <?= htmlspecialchars($user["nama"]) ?></p>
+
+        <h2>Hello <?= htmlspecialchars($user["nama"]) ?></h2>
 
         <p><a href="logout.php">log out</a></p>
+
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#pesanbaru">+ Pesan Baru</button>
+
+        <!-- modal form -->
+        <div class="modal fade" id="pesanbaru" tabindex="-1" aria-labelledby="modal-pesan-baru" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="modal-pesan-baru">Pesan Baru</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="form-pesan-baru" action="" method="POST">
+                            <div class="mb-3">
+                                <label for="id-penerima" class="col-form-label">Kepada:</label>
+                                <?php
+                                $sql_get_pejabat = "SELECT id, nama FROM admin";
+
+                                $pejabats = mysqli_query($db,  $sql_get_pejabat);
+                                ?>
+                                <select class="form-select" id="id-penerima" name="id-penerima">
+                                    <?php
+                                    while ($row = mysqli_fetch_array($pejabats)) {
+                                        echo  "<option value=" . $row['id'] . ">" . $row['nama'] . "</option>";
+                                    }
+                                    ?>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="isi-pesan" class="col-form-label">Pesan:</label>
+                                <textarea class="form-control" id="isi-pesan" name="isi-pesan"></textarea>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" form="form-pesan-baru" class="btn btn-primary" name="pesan-baru">Kirim Pesan</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- pesan-pesan -->
+        <div class="mx-3 row row-cols-1 row-cols-sm-2 row-cols-md-4 g-4">
+            <?php
+            $sql_get_pesan = "SELECT p.isi, a.nama FROM pesan p JOIN admin a ON p.pejabat_tujuan = a.id where p.pengirim = {$_SESSION["user_id"]}";
+
+            $pesans = mysqli_query($db,  $sql_get_pesan);
+
+            while ($row = mysqli_fetch_array($pesans)) {
+                echo "<div class='col'>";
+                echo "<div class='card'>";
+                echo "<div class='card-body'>";
+                echo "<h5 class='card-title'>" . $row['nama'] . "</h5>";
+                echo "<p class='card-text' >" . $row['isi'] . "</p>";
+                echo "</div>";
+                echo "</div>";
+                echo "</div>";
+                // echo  "<option value=" . $row['isi'] . ">" . $row['nama'] . "</option>";
+            }
+            ?>
     <?php else : ?>
         <?php header("Location: index.php"); ?>
     <?php endif; ?>
