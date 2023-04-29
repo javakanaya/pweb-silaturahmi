@@ -41,7 +41,7 @@
 
     <!-- Form -->
     <div class="container w-25 mt-5 d-flex justify-content-between">
-        <a href="warga-register.php" class="btn btn-primary">Tamu</a>
+        <a href="warga-login.php" class="btn btn-primary">Tamu</a>
         <a href="loginpejabat.php" class="btn btn-primary">Pejabat</a>
     </div>
 </body>
