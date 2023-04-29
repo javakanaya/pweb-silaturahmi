@@ -74,12 +74,11 @@ if (isset($_SESSION["user_id"])) {
             </div>
         </nav>
 
-
-        <h2>Hello <?= htmlspecialchars($user["nama"]) ?></h2>
-
-        <p><a href="logout.php">log out</a></p>
-
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#pesanbaru">+ Pesan Baru</button>
+        <h2 class="container m-3 h2 fw-bold">Hello "<?= htmlspecialchars($user["nama"]) ?>"</h2>
+        <div class="mx-3 d-flex flex-row mb-3">
+            <a class="btn btn-danger m-3" href="logout.php">log out</a>
+            <button type="button" class="btn btn-primary m-3" data-bs-toggle="modal" data-bs-target="#pesanbaru">+ Pesan Baru</button>
+        </div>
 
         <!-- modal form -->
         <div class="modal fade" id="pesanbaru" tabindex="-1" aria-labelledby="modal-pesan-baru" aria-hidden="true">
@@ -121,7 +120,7 @@ if (isset($_SESSION["user_id"])) {
         </div>
 
         <!-- pesan-pesan -->
-        <div class="mx-3 row row-cols-1 row-cols-sm-2 row-cols-md-4 g-4">
+        <div class="mx-3 mb-5 row row-cols-1 row-cols-sm-2 row-cols-md-4 g-4">
             <?php
             $sql_get_pesan = "SELECT p.isi, a.nama FROM pesan p JOIN admin a ON p.pejabat_tujuan = a.id where p.pengirim = {$_SESSION["user_id"]}";
 
@@ -129,7 +128,7 @@ if (isset($_SESSION["user_id"])) {
 
             while ($row = mysqli_fetch_array($pesans)) {
                 echo "<div class='col'>";
-                echo "<div class='card'>";
+                echo "<div class='card h-100'>";
                 echo "<div class='card-body'>";
                 echo "<h5 class='card-title'>" . $row['nama'] . "</h5>";
                 echo "<p class='card-text' >" . $row['isi'] . "</p>";
@@ -139,9 +138,9 @@ if (isset($_SESSION["user_id"])) {
                 // echo  "<option value=" . $row['isi'] . ">" . $row['nama'] . "</option>";
             }
             ?>
-    <?php else : ?>
-        <?php header("Location: index.php"); ?>
-    <?php endif; ?>
+        <?php else : ?>
+            <?php header("Location: index.php"); ?>
+        <?php endif; ?>
 </body>
 
 </html>
