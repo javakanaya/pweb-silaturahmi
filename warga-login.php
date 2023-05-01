@@ -77,7 +77,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         <h2>Masuk ke akun warga</h2>
 
         <?php if ($is_invalid) : ?>
-            <em>Invalid Login</em>
+            <em style="color:red;">Invalid Login</em>
         <?php endif; ?>
 
         <form action="" method="POST">

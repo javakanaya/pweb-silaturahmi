@@ -1,17 +1,50 @@
+<?php 
+
+$wrongpass=false;
+$wrongname=false;
+
+if($_SERVER['REQUEST_METHOD'] == 'POST'){
+    include 'config.php';
+
+    $nama=$_POST['nama'];
+
+    $sql="select * from admin where nama='$nama'";
+    $query=mysqli_query($db,$sql);
+    $admin=mysqli_fetch_array($query);
+
+    if($admin){
+        if(password_verify($_POST['password'],$admin['password'])){
+            session_start();
+
+            $_SESSION['user_id']=$admin['id'];
+
+            header('Location: admin-home.php');
+            exit;
+        }
+        else{
+            $wrongpass=true;
+            $wrongname=false;
+        }
+    }
+    else{
+        $wrongpass=false;
+        $wrongname=true;
+    }
+}
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Silaturahmi</title>
+    <title>Login Admin</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
-
 </head>
-
 <body>
     <!-- Navbar -->
     <nav class="navbar bg-dark navbar-expand-lg bg-body-tertiary" data-bs-theme="dark">
@@ -39,22 +72,28 @@
         </div>
     </nav>
 
-    <!-- Form -->
-    <div class="container border mt-5">
-        <h2>Login Ke Akun Pejabat</h2>
-        <form action="" method="POST">
+    <div class="container mt-5">
+        <h2>Masuk ke akun admin</h2>
+
+        <form method="post">
             <div class="mb-3">
-                <label for="email" class="form-label">Email address</label>
-                <input type="email" class="form-control" id="email" aria-describedby="emailHelp">
-                <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
+                <label for="nama" class="form-label">Nama</label>
+                <input type="nama" class="form-control" id="nama" name="nama" value="<?= htmlspecialchars($_POST["nama"] ?? "")  ?>">
+                <?php if ($wrongname): ?>
+                    <em style="color:red;">Wrong name!</em>
+                <?php endif; ?>
             </div>
+
             <div class="mb-3">
-                <label for="password" class="form-label">Password</label>
-                <input type="password" class="form-control" id="password">
+                <label for="alamat" class="form-label">Password</label>
+                <input type="password" class="form-control" id="pass" name="password">
+                <?php if ($wrongpass): ?>
+                    <em style="color:red;">Wrong password!</em>
+                <?php endif; ?>
             </div>
-            <button type="button" class="btn btn-primary">Login</button>
+
+            <button class="btn btn-primary">Submit</button>
         </form>
     </div>
 </body>
-
 </html>

@@ -44,39 +44,41 @@ if (isset($_SESSION["user_id"])) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
 
+    <style>
+        .profile{
+            display:flex;
+            align-items:center;
+        }
+        .profile:hover{
+            cursor: pointer;
+        }
+        .profile img{
+            height: 40px;
+            margin-right:15px;
+        }
+        h6{
+            font-size: 16px;
+            color:#efefef;
+        }
+    </style>
+
 </head>
 
 <body>
     <?php if (isset($user)) : ?>
         <!-- Navbar -->
-        <nav class="navbar bg-dark navbar-expand-lg bg-body-tertiary" data-bs-theme="dark">
+        <nav class="navbar bg-dark navbar-expand-lg bg-body-tertiary vw-100" data-bs-theme="dark">
             <div class="container-fluid">
-                <a class="navbar-brand" href="index.php">Navbar</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav">
-                        <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="index.php">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">Features</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">Pricing</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link disabled">Disabled</a>
-                        </li>
-                    </ul>
+                <div class="profile">
+                    <img src="./img/profile-picture.png">
+                    <h6><?php echo $user['nama'] ?></h6>
                 </div>
+                <a class="btn btn-danger" href="logout.php">log out</a>
             </div>
         </nav>
 
         <h2 class="container m-3 h2 fw-bold">Hello "<?= htmlspecialchars($user["nama"]) ?>"</h2>
         <div class="mx-3 d-flex flex-row mb-3">
-            <a class="btn btn-danger m-3" href="logout.php">log out</a>
             <button type="button" class="btn btn-primary m-3" data-bs-toggle="modal" data-bs-target="#pesanbaru">+ Pesan Baru</button>
         </div>
 
